@@ -1,23 +1,42 @@
-# This is a template for a Python scraper on Morph (https://morph.io)
-# including some code snippets below that you should find helpful
+import json
+import lxml.html
+import re
+import requests
 
-# import scraperwiki
-# import lxml.html
-#
-# # Read in a page
-# html = scraperwiki.scrape("http://foo.com")
-#
-# # Find something on the page using css selectors
-# root = lxml.html.fromstring(html)
-# root.cssselect("div[align='left']")
-#
-# # Write out to the sqlite database using scraperwiki library
-# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
-#
-# # An arbitrary query against the database
-# scraperwiki.sql.select("* from data where 'name'='peter'")
+downloads = {}
 
-# You don't have to do things with the ScraperWiki and lxml libraries. You can use whatever libraries are installed
-# on Morph for Python (https://github.com/openaustralia/morph-docker-python/blob/master/pip_requirements.txt) and all that matters
-# is that your final data is written to an Sqlite database called data.sqlite in the current working directory which
-# has at least a table called data.
+for package in ['ostinato-bin-win32', 'ostinato-bin-osx-universal', 'ostinato-src']:
+    page = requests.get('https://bintray.com/pstavirs/ostinato/'+package+'/view/statistics') 
+    doc = lxml.html.document_fromstring(page.text)
+
+    # get the javascript snippet containing the downloads data
+    script = doc.xpath("//div[@id='renderPkgPage']//div[@id='show-pkg']/script[2]")[0]
+    #print script.text
+
+    # extract just the downloads data from the javascript
+    m = re.search('series:(.*),\s+legend', script.text, re.DOTALL)
+
+    # massage the javascript object to make it valid json
+    n = re.sub('Date.UTC\((\d+), (\d+)-1, (\d+)\)', '"\g<1>-\g<2>-\g<3>"', m.group(1))
+    n = re.sub('name|data', '"\g<0>"', n);
+    #print n
+
+    # parse the json
+    j = json.loads(n)
+    #print json.dumps(j[0])
+
+    # json schema -
+    # [{name : <version>, data : [[<date>, <count>], ...]}]
+    # data ordered from older to newer dates
+
+    # since today is not yet over, get yesterday's count 
+    name = package+'-'+j[0]['name']
+    date = j[0]['data'][-2][0]
+    count = j[0]['data'][-2][1]
+    #print date, name, count
+    downloads['Date'] = date
+    downloads[name] = count
+
+print downloads
+scraperwiki.sqlite.save(unique_keys=['Date'], data=downloads, table_name='downloads')
+
