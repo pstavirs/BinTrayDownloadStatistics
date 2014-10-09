@@ -2,6 +2,7 @@ import json
 import lxml.html
 import re
 import requests
+import scraperwiki
 
 downloads = {}
 
