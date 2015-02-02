@@ -11,7 +11,7 @@ for package in ['ostinato-bin-win32', 'ostinato-bin-osx-universal', 'ostinato-sr
     doc = lxml.html.document_fromstring(page.text)
 
     # get the javascript snippet containing the downloads data
-    script = doc.xpath("//div[@id='renderPkgPage']//div[@id='show-pkg']/script[2]")[0]
+    script = doc.xpath("//div[@id='renderPkgPage']//div[@id='show-pkg']/script[1]")[0]
     #print script.text
 
     # extract just the downloads data from the javascript
