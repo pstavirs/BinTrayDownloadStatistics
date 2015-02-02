@@ -7,7 +7,7 @@ import scraperwiki
 downloads = {}
 
 for package in ['ostinato-bin-win32', 'ostinato-bin-osx-universal', 'ostinato-src']:
-    page = requests.get('https://bintray.com/pstavirs/ostinato/'+package+'/view/statistics') 
+    page = requests.get('https://bintray.com/pstavirs/ostinato/'+package+'/#statistics') 
     doc = lxml.html.document_fromstring(page.text)
 
     # get the javascript snippet containing the downloads data
