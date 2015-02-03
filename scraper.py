@@ -7,7 +7,7 @@ from datetime import date as Date
 
 downloads = {}
 
-#scraperwiki.sqlite.execute("delete from downloads where Date > '2015-01-18'")
+scraperwiki.sqlite.execute("delete from downloads where Date > '2015-01-18'")
 
 last_date = scraperwiki.sqlite.select("max(Date) from downloads where Date < '" + Date.today().isoformat() + "'")[0]['max(Date)']
 print "Last date in DB: "+last_date
