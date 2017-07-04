@@ -12,7 +12,7 @@ print "Last date in DB: "+last_date
 
 for package in ['ostinato-bin-win32', 'ostinato-bin-osx-universal', 'ostinato-src']:
     # retrieve the statistics json data
-    page = requests.get('https://bintray.com/statistics/packageStatistics?pkgPath=/pstavirs/ostinato/'+package)
+    page = requests.get('https://bintray.com/statistics/packageStatistics?pkgPath=/ostinato/ostinato/'+package)
     #print page.text
 
     # parse the json
